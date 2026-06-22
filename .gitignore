@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+*/node_modules/
+
+# Environment files - JANGAN upload ke GitHub!
+.env
+backend/.env
+frontend/.env.local
+frontend/.env.production
+
+# Build
+frontend/build/
+
+# Data files (local only)
+backend/data/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db

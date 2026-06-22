@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sqlacc_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sqlacc_web
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sqlacc123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+
+  backend:
+    build: ./backend
+    container_name: sqlacc_api
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      NODE_ENV: production
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: sqlacc_web
+      DB_USER: postgres
+      DB_PASSWORD: sqlacc123
+      JWT_SECRET: change_this_secret_in_production
+      JWT_EXPIRES_IN: 8h
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    container_name: sqlacc_web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
